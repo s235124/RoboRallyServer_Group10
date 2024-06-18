@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "lobbies")
 @Getter
@@ -15,7 +18,7 @@ import lombok.Setter;
 
 public class Lobby {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer lobbyID;
 
     int maxPlayerCount;
@@ -23,4 +26,6 @@ public class Lobby {
 
     boolean visibility;
 
+    @OneToMany(mappedBy = "currentLobby")
+    List<Player> players;
 }

@@ -15,10 +15,16 @@ import lombok.Setter;
 
 public class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+
     String playerName;
 
     String cards;
 
     String color;
+
+    @ManyToOne()
+    @JoinColumn(name = "current_lobby")
+    Lobby currentLobby;
 }

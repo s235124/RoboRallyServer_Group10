@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Player;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.repository.PlayerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,48 +10,51 @@ import java.util.Optional;
 
 @RestController
 //Base endpoint
-@RequestMapping("/players")
+@RequestMapping("lobbies/{id}/players")
 public class PlayerController {
 
-    @Autowired
-    private IPlayerService playerService;
+    private PlayerRepository playerRepository;
 
-    @GetMapping
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.findAll();
-        return ResponseEntity.ok(players);
+    public PlayerController(PlayerRepository playerRepository) {
+        this.playerRepository = playerRepository;
     }
 
     @GetMapping
-    @RequestMapping(value = "/{id}")
-    public ResponseEntity<Player> getPlayerById(String id) {
-        Player player = playerService.findById(id);
-        return ResponseEntity.ok().body(player);
+    public List<Player> getAllPlayers() {
+        return playerRepository.findAll();
+    }
+
+    @GetMapping(value = "/{playerid}")
+    public Player getPlayerById(Integer id) {
+        return playerRepository.findById(id).orElse(null);
     }
 
     @GetMapping
     @RequestMapping(value = "/NoP")
-    public ResponseEntity<Integer> getNumberOfPlayers () {
-        List<Player> players = playerService.findAll();
-        return ResponseEntity.ok(players.size());
+    public int getNumberOfPlayers () {
+        return playerRepository.findAll().size();
     }
 
     @PostMapping
-    public ResponseEntity<String> addPlayer(@RequestBody Player player) {
-        boolean added = playerService.save(player);
-        if (added)
-            return ResponseEntity.ok("Player added successfully");
-        else
-            return ResponseEntity.internalServerError().body("Error saving player");
+    public Player addPlayer(@RequestBody Player player) {
+        return playerRepository.save(player);
     }
 
-    public ResponseEntity<String> updatePlayer(String id, @RequestBody Player player) {
-        playerService.update(id, player);
-        return ResponseEntity.ok("Player updated successfully");
+    @PutMapping("/{playerid}")
+    public Player updatePlayer(Integer id, @RequestBody Player player) {
+        Player exists = playerRepository.findById(id).orElse(null);
+        if (exists != null) {
+            exists.setPlayerName(player.getPlayerName());
+            exists.setCards(player.getCards());
+            exists.setColor(player.getColor());
+            exists.setCurrentLobby(player.getCurrentLobby());
+            return playerRepository.save(player);
+        }
+        return null;
     }
 
-    public ResponseEntity<String> deletePlayer(String id) {
-        playerService.delete(id);
-        return ResponseEntity.ok("Player deleted successfully");
+    @DeleteMapping("/{playerid}")
+    public void deletePlayer(Integer id) {
+        playerRepository.deleteById(id);
     }
 }

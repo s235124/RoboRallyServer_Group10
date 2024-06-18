@@ -1,26 +1,26 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Lobby;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.repository.LobbyRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 //Base endpoint
 @RequestMapping("/lobbies")
 public class LobbyController {
 
-    @Autowired
-    private ILobbyService lobbyService;
+    private LobbyRepository lobbyRepository;
+
+    public LobbyController(LobbyRepository lobbyRepository) {
+        this.lobbyRepository = lobbyRepository;
+    }
 
     @GetMapping
     public ResponseEntity<List<Lobby>> getLobbies() {
-        List<Lobby> lobbies = lobbyService.findAll();
+        List<Lobby> lobbies = lobbyRepository.findAll();
         if (lobbies.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -29,8 +29,31 @@ public class LobbyController {
 
     @GetMapping
     @RequestMapping(value = "/{id}")
-    public ResponseEntity<Lobby> getLobbyById(Integer id) {
-        Lobby lobby = lobbyService.findById(id);
-        return ResponseEntity.ok(lobby);
+    public Lobby getLobbyById(Integer id) {
+        return lobbyRepository.findById(id).orElse(null);
     }
+
+    @PostMapping
+    public Lobby addLobby(@RequestBody Lobby lobby) {
+        return lobbyRepository.save(lobby);
+    }
+
+    @PutMapping("/{id}")
+    public Lobby updateLobby(Integer id, @RequestBody Lobby lobby) {
+        Lobby exists = lobbyRepository.findById(id).orElse(null);
+        if (exists != null) {
+            exists.setVisibility(lobby.isVisibility());
+            exists.setMaxPlayerCount(lobby.getMaxPlayerCount());
+            exists.setCurrentPlayerCount(lobby.getCurrentPlayerCount());
+            exists.setPlayers(lobby.getPlayers());
+            return lobbyRepository.save(exists);
+        }
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteLobby(Integer id) {
+        lobbyRepository.deleteById(id);
+    }
+
 }
