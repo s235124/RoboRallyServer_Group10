@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +26,11 @@ public class Lobby {
     int maxPlayerCount;
     int currentPlayerCount;
 
+    Integer map;
+
     boolean visibility;
+
+    boolean ready;
 
     @OneToMany(mappedBy = "currentLobby")
     List<Player> players;
