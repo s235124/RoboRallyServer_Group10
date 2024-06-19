@@ -32,6 +32,7 @@ public class Lobby {
 
     boolean ready;
 
+//    @JsonBackReference
     @OneToMany(mappedBy = "currentLobby")
     List<Player> players;
 }

@@ -2,11 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Player;
 import com.example.demo.repository.PlayerRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 //Base endpoint
@@ -45,7 +43,7 @@ public class PlayerController {
         Player exists = playerRepository.findById(id).orElse(null);
         if (exists != null) {
             exists.setPlayerName(player.getPlayerName());
-            exists.setCards(player.getCards());
+            exists.setCardStr(player.getCardStr());
             exists.setColor(player.getColor());
             exists.setCurrentLobby(player.getCurrentLobby());
             return playerRepository.save(player);
