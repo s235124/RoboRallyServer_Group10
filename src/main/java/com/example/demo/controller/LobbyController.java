@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Lobby;
+import com.example.demo.model.Player;
 import com.example.demo.repository.LobbyRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +53,40 @@ public class LobbyController {
     public ResponseEntity<Integer> getNoLobbies() {
         List<Lobby> lobbies = lobbyRepository.findAll();
         return ResponseEntity.ok(lobbies.size());
+    }
+
+    @GetMapping(value = "/{id}/getplayers")
+    public ResponseEntity<List<Player>> getPlayers(@PathVariable Integer id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            return ResponseEntity.ok(lobby.getPlayers());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(value = "/{id}/isready")
+    public ResponseEntity<Boolean> isReady(@PathVariable int id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            if (lobby.isReady()) {
+                return ResponseEntity.ok(true);
+            }
+            return ResponseEntity.ok(false);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(value = "/{id}/ready")
+    public ResponseEntity<Boolean> setReady(@PathVariable int id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            if (lobby.getCurrentPlayerCount() >= 2) {
+                lobby.setReady(true);
+                lobbyRepository.save(lobby);
+                return ResponseEntity.ok(true);
+            }
+        }
+        return ResponseEntity.ok(false);
     }
 
     @PostMapping
