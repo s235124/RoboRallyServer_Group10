@@ -64,7 +64,7 @@ public class PlayerController {
     }
 
     @DeleteMapping("/{playerid}")
-    public ResponseEntity<String> deletePlayer(Integer id) {
+    public ResponseEntity<String> deletePlayer(@PathVariable Integer id) {
         playerRepository.deleteById(id);
         return ResponseEntity.ok("Player deleted successfully");
     }

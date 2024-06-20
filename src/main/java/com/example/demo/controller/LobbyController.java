@@ -37,6 +37,23 @@ public class LobbyController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping(value = "/{id}/inc")
+    public ResponseEntity<String> incrementPlayerCount (@PathVariable Integer id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            lobby.setCurrentPlayerCount(lobby.getCurrentPlayerCount() + 1);
+            lobbyRepository.save(lobby);
+            return ResponseEntity.ok(lobby.toString());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping(value = "/NoL")
+    public ResponseEntity<Integer> getNoLobbies() {
+        List<Lobby> lobbies = lobbyRepository.findAll();
+        return ResponseEntity.ok(lobbies.size());
+    }
+
     @PostMapping
     public ResponseEntity<String> addLobby(@RequestBody Lobby lobby) {
         lobbyRepository.save(lobby);
