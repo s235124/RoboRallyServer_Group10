@@ -29,31 +29,38 @@ public class LobbyController {
 
     @GetMapping
     @RequestMapping(value = "/{id}")
-    public Lobby getLobbyById(Integer id) {
-        return lobbyRepository.findById(id).orElse(null);
+    public ResponseEntity<Lobby> getLobbyById(@PathVariable Integer id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            return ResponseEntity.ok(lobby);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public Lobby addLobby(@RequestBody Lobby lobby) {
-        return lobbyRepository.save(lobby);
+    public ResponseEntity<String> addLobby(@RequestBody Lobby lobby) {
+        lobbyRepository.save(lobby);
+        return ResponseEntity.ok("lobby created");
     }
 
     @PutMapping("/{id}")
-    public Lobby updateLobby(Integer id, @RequestBody Lobby lobby) {
+    public ResponseEntity<String> updateLobby(@PathVariable Integer id, @RequestBody Lobby lobby) {
         Lobby exists = lobbyRepository.findById(id).orElse(null);
         if (exists != null) {
             exists.setVisibility(lobby.isVisibility());
             exists.setMaxPlayerCount(lobby.getMaxPlayerCount());
             exists.setCurrentPlayerCount(lobby.getCurrentPlayerCount());
             exists.setPlayers(lobby.getPlayers());
-            return lobbyRepository.save(exists);
+            lobbyRepository.save(exists);
+            return ResponseEntity.ok("lobby successfully updated");
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLobby(Integer id) {
+    public ResponseEntity<String> deleteLobby(@PathVariable Integer id) {
         lobbyRepository.deleteById(id);
+        return ResponseEntity.ok("lobby successfully deleted");
     }
 
 }
