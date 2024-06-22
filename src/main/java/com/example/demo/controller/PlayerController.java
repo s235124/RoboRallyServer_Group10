@@ -28,8 +28,8 @@ public class PlayerController {
     }
 
     @GetMapping(value = "/{playerid}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable Integer id) {
-        Player player = playerRepository.findById(id).orElse(null);
+    public ResponseEntity<Player> getPlayerById(@PathVariable Integer playerid) {
+        Player player = playerRepository.findById(playerid).orElse(null);
         if (player != null) {
             return ResponseEntity.ok(player);
         }
@@ -50,8 +50,8 @@ public class PlayerController {
     }
 
     @PutMapping("/{playerid}")
-    public ResponseEntity<String> updatePlayer(@PathVariable Integer id, @RequestBody Player player) {
-        Player exists = playerRepository.findById(id).orElse(null);
+    public ResponseEntity<String> updatePlayer(@PathVariable Integer playerid, @RequestBody Player player) {
+        Player exists = playerRepository.findById(playerid).orElse(null);
         if (exists != null) {
             exists.setPlayerName(player.getPlayerName());
             exists.setCardStr(player.getCardStr());
@@ -63,9 +63,20 @@ public class PlayerController {
         return ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/{playerid}/cardstr")
+    public ResponseEntity<String> updateCardStrOnPlayer (@PathVariable Integer playerid, @RequestBody String cardStr) {
+        Player exists = playerRepository.findById(playerid).orElse(null);
+        if (exists != null) {
+            exists.setCardStr(cardStr);
+            playerRepository.save(exists);
+            return ResponseEntity.ok("lobby successfully updated");
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @DeleteMapping("/{playerid}")
-    public ResponseEntity<String> deletePlayer(@PathVariable Integer id) {
-        playerRepository.deleteById(id);
+    public ResponseEntity<String> deletePlayer(@PathVariable Integer playerid) {
+        playerRepository.deleteById(playerid);
         return ResponseEntity.ok("Player deleted successfully");
     }
 }
