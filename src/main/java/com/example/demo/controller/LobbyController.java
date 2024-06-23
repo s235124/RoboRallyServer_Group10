@@ -103,6 +103,7 @@ public class LobbyController {
             exists.setMaxPlayerCount(lobby.getMaxPlayerCount());
             exists.setCurrentPlayerCount(lobby.getCurrentPlayerCount());
             exists.setPlayers(lobby.getPlayers());
+            exists.setPlayerColors(lobby.getPlayerColors());
             lobbyRepository.save(exists);
             return ResponseEntity.ok("lobby successfully updated");
         }
@@ -115,4 +116,12 @@ public class LobbyController {
         return ResponseEntity.ok("lobby successfully deleted");
     }
 
+    @GetMapping("/{id}/colors")
+    public ResponseEntity<String> getColors(@PathVariable Integer id) {
+        Lobby lobby = lobbyRepository.findById(id).orElse(null);
+        if (lobby != null) {
+            return ResponseEntity.ok(lobby.getPlayerColors());
+        }
+        return ResponseEntity.notFound().build();
+    }
 }

@@ -1,14 +1,11 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,7 +29,8 @@ public class Lobby {
 
     boolean ready;
 
-//    @JsonBackReference
     @OneToMany(mappedBy = "currentLobby")
     List<Player> players;
+
+    String playerColors = "red,green,blue,orange,grey,magenta";
 }
